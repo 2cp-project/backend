@@ -24,7 +24,7 @@ router.patch("/language/update",userController.updateslanguage)
 router.patch("/language/delete",userController.deletelanguage)
 //// FIRST PAGE PART CVS
 router.get("/", userController.getAllUsers);
-router.get("/users/:userID", userController.getUser);
+router.get("/users/:userID",userController.getuseractivities,userController.getUser);
 // SEARCH ONE
   
 router.patch(

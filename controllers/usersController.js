@@ -1,6 +1,9 @@
 const handleFactory = require("./handleFactory");
 const asyncCatcher = require("../utils/asyncCatcher");
 const User = require("../models/userModule");
+const { Blog } = require("../../userAuth/models/contentModule");
+const { Course } = require("../../userAuth/models/contentModule");
+const { Resource } = require("../../userAuth/models/contentModule");
 
 exports.getAllUsers = asyncCatcher(async (req, res, next) => {
   const users = await User.find({});
@@ -19,7 +22,7 @@ exports.getUser = asyncCatcher(async (req, res, next) => {
   console.log(user)
   
   // Send the user's name and photo as a response
-  res.status(200).json(user);
+  res.status(200).json(user,res.activities);
   console.log("this is the username",user.name);
 });
 exports.updateuser=asyncCatcher(async (req, res, next) => {
@@ -205,6 +208,39 @@ exports.getUsersaves = asyncCatcher(async (req, res, next) => {
   res.status(200).json(populateduser);
   console.log("this is the username",populateduser);
 });
+
+
+
+
+
+
+
+
+exports.getuseractivities=asyncCatcher(async (req, res, next) => {
+  try {
+      const blogs=await Blog.find({user_id:req.body.user_id}).sort({datePublished:-1});
+      const courses=await Course.find({user_id:req.user_id}).sort({datePublished:-1});
+      const resourses=await Resource.find({user_id:req.user_id}).sort({datePublished:-1});
+      const activities = blogs.concat(courses, resourses);
+
+// Sort the merged array by datePublished (from newest to oldest)
+activities.sort((a, b) => b.datePublished - a.datePublished);
+
+// Output the sorted merged array
+console.log(activities);
+      res.activities({data:activities})
+      next()
+    }
+    
+  catch(error){
+          console.error("Error getting statistics:", error);
+          res.status(500).json({
+            status: "error",
+            message: "Failed to get statistics ",
+  
+      })
+
+      }});
 // exports.getAllUsers=handleFactory.getAll(User)
 
 exports.getUserCv = handleFactory.getOne(User);
