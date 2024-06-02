@@ -65,7 +65,7 @@ exports.getpostsnum=asyncCatcher(async (req, res, next) => {
         })
 
         }});
-        exports.getpostsnum=asyncCatcher(async (req, res, next) => {
+        exports.getsavessnum=asyncCatcher(async (req, res, next) => {
             try {
                 const user=await User.findById(req.user._id)
                 const blogs=await Blog.find({user_id:req.user.id});
