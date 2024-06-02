@@ -22,7 +22,10 @@ router.patch("/blogs/:blogID", contentCreation.saveblog);
 router.delete("/blogs/:blogID",contentCreation.deleteblog)
 router.patch("/blogs/categories/update/:blogID",contentCreation.updatecategorie)
 router.patch("/blogs/categories/delete/:blogID",contentCreation.deletecategorie)
-// router.get("/blogs/statas",Statistics.calcblogsStats,Statistics.calccourseStats,Statistics.calcresourceStats) 
+router.patch("/blogs/save",contentCreation.saveblog)
+router.patch("/courses/save",contentCreation.savecourse)
+router.patch("/resourses/save",contentCreation.saveresource)
+
 
 
 

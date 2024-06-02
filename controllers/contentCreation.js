@@ -530,7 +530,8 @@ exports.blogaddpoint=asyncCatcher(async (req, res, next) => { //hadi kil ma yzid
 exports.saveresource=asyncCatcher(async (req, res, next) => {
   try{
 const resource=await Resource.findById(req.params.resourceID)
-
+resource.saves+=1;
+await resource.save()
 
 const myuser= await User.findOneAndUpdate({_id:resource.user_id},{$inc:{points:4}});
 const myuserr= await User.findOneAndUpdate({_id:req.user._id},{$push:{saves:{doctype:"resourse",id:req.params.resourceID} }});
@@ -549,6 +550,8 @@ res.json({
 exports.saveblog=asyncCatcher(async (req, res, next) => {
   try{
 const blog=await Blog.findById(req.params.blogID)
+blog.saves+=1;
+await blog.save()
 const myuser= await User.findOneAndUpdate({_id:blog.user_id},{$inc:{points:4}});
 const myuserr= await User.findOneAndUpdate({_id:req.user._id},{$push:{saves:{doctype:"blog",id:req.params.blogID} } }); 
 res.json({
@@ -567,7 +570,10 @@ res.json({
 
 exports.savecourse=asyncCatcher(async (req, res, next) => {
   try{
-const course=await Course.findById(req.params.courseID)
+const course=await Course.findOneAndUpdate(req.params.courseID)
+course.saves+=1;
+await course.save()
+
 
 
 const myuser= await User.findOneAndUpdate({_id:course.user_id},{$inc:{points:4}});

@@ -65,4 +65,40 @@ exports.getpostsnum=asyncCatcher(async (req, res, next) => {
         })
 
         }});
+        exports.getpostsnum=asyncCatcher(async (req, res, next) => {
+            try {
+                const user=await User.findById(req.user._id)
+                const blogs=await Blog.find({user_id:req.user.id});
+                const courses=await Course.find({user_id:req.user.id});
+                const resourses=await Resource.find({user_id:req.user.id});
+                function calculateUpSum(blogs) {
+                    let sum = 0;
+                    for (let i = 0; i < blogs.length; i++) {
+                      sum += blogs[i].up;
+                    }
+                    return sum;
+                  }
+                  function calculateUpSum(blogs) {
+                    let sum = 0;
+                    for (let i = 0; i < blogs.length; i++) {
+                      sum += blogs[i].down;
+                    }
+                    return sum;
+                  }
+                  
+                  // Calculate the sum of "up" field
+                  const blogUpSum = calculateUpSum(blogs);
+                  const blogdownSum = calculatedownSum(blogs);
+                res.json({saves:blogs.saves+courses.saves+resourses.saves,up:blogUpSum,down:blogdownSum})}
+                catch(error){
+                    console.error("Error getting statistics:", error);
+                    res.status(500).json({
+                      status: "error",
+                      message: "Failed to get statistics ",
+            
+                })
+        
+                }});
+
+        
 

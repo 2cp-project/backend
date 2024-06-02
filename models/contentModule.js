@@ -56,6 +56,10 @@ const contentSchema = new mongoose.Schema({
     ref: "User",
   default:[],
   }],
+  saves:{
+    type:Number,
+    default:0
+  }
 });
 // Create multiple models using the same schema
 // Define middleware or methods specific to each model
@@ -116,7 +120,10 @@ const contentSchema2 = new mongoose.Schema({
   },revusers:[{type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   default:[],
-  }],
+  }],saves:{
+    type:Number,
+    default:0
+  }
 });
 const Blog = mongoose.model("Blog", contentSchema);
 const Resource = mongoose.model("Resource", contentSchema);
