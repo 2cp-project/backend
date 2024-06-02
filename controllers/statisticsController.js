@@ -49,3 +49,20 @@ exports.gettopusers=asyncCatcher(async (req, res, next) => {
 
     })
 }});
+
+exports.getpostsnum=asyncCatcher(async (req, res, next) => {
+    try {
+        const blogs=await Blog.find();
+        const courses=await Course.find();
+        const resourses=await Resource.find();
+        res.json({blognum:blogs.length,coursenum:courses.length,resoursenum:resourses.length})}
+        catch(error){
+            console.error("Error getting statistics:", error);
+            res.status(500).json({
+              status: "error",
+              message: "Failed to get statistics ",
+    
+        })
+
+        }});
+

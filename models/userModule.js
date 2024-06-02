@@ -93,9 +93,12 @@ const userSchema = new mongoose.Schema({
     type:Number,
     default:1
   },saves:[{
-    type: mongoose.Schema.Types.ObjectId,
+    doctype:{
+      type:String,
+    },
+    id:{type: mongoose.Schema.Types.ObjectId,
     ref:"Blog,Cours,Resourse",
-    default:[]
+    default:[]}
   }]
 });
 

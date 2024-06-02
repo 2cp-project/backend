@@ -510,12 +510,12 @@ exports.deleteresource=asyncCatcher(async (req, res, next) => {
     });
   }
 })
-exports.blogaddpoint=asyncCatcher(async (req, res, next) => {
+exports.blogaddpoint=asyncCatcher(async (req, res, next) => { //hadi kil ma yzid scroll b 10% t3ayatlha wla ki ydir share 
   try{
   res.json({
     seccess:true,
   })
-  const myuser= await User.findOneAndUpdate({_id:req.body.user_id},{$inc:{points:1}})
+  const myuser= await User.findOneAndUpdate({_id:req.body.user_id},{$inc:{points:req.query.points}})
 
 }
   catch(error){
@@ -533,7 +533,7 @@ const resource=await Resource.findById(req.params.resourceID)
 
 
 const myuser= await User.findOneAndUpdate({_id:resource.user_id},{$inc:{points:4}});
-const myuserr= await User.findOneAndUpdate({_id:req.user._id},{$push:{saves:req.params.resourceID }});
+const myuserr= await User.findOneAndUpdate({_id:req.user._id},{$push:{saves:{doctype:"resourse",id:req.params.resourceID} }});
 res.json({
   seccess:true,
 })
@@ -550,7 +550,7 @@ exports.saveblog=asyncCatcher(async (req, res, next) => {
   try{
 const blog=await Blog.findById(req.params.blogID)
 const myuser= await User.findOneAndUpdate({_id:blog.user_id},{$inc:{points:4}});
-const myuserr= await User.findOneAndUpdate({_id:req.user._id},{$push:{saves:req.params.blogID } }); 
+const myuserr= await User.findOneAndUpdate({_id:req.user._id},{$push:{saves:{doctype:"blog",id:req.params.blogID} } }); 
 res.json({
   seccess:true,
 })
@@ -571,7 +571,7 @@ const course=await Course.findById(req.params.courseID)
 
 
 const myuser= await User.findOneAndUpdate({_id:course.user_id},{$inc:{points:4}});
-const myuserr= await User.findOneAndUpdate({_id:req.user._id},{$push:{saves: {$in:req.paramscourseID } }});
+const myuserr= await User.findOneAndUpdate({_id:req.user._id},{$push:{saves:{doctype:"course",id:req.params.courseID} }});
 res.json({
   seccess:true,
 })

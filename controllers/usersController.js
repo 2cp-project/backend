@@ -189,6 +189,22 @@ exports.updateSkills = async (req, res, next) => {
   }
 };
 
+
+exports.getUsersaves = asyncCatcher(async (req, res, next) => {
+  // const user = req.user;
+  const user= await User.find({_id:req.params.userID})
+  const sevess=user.saves
+  const  populateduser = await Promise.all(saves.map(async(save) => {
+    // Access user details from the populated user_id field
+  await  save.id.populate("user_id","name photo");
+   return save;
+  }));
+  console.log(user)
+  
+  // Send the user's name and photo as a response
+  res.status(200).json(populateduser);
+  console.log("this is the username",populateduser);
+});
 // exports.getAllUsers=handleFactory.getAll(User)
 
 exports.getUserCv = handleFactory.getOne(User);
