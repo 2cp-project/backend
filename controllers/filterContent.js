@@ -14,13 +14,35 @@ app.use(bodyParser.json())
 
 
 exports.getsortedusers = asyncCatcher(async (req, res, next) => {
-  try {
-      const users = await User.find().sort({ points: req.query.sort });
+    try {
+      // Extract 'from' and 'to' parameters from the request
+      const from = req.params.from;
+      const to = req.params.to;
+  
+      // Function to create an array of numbers from 'from' to 'to'
+      function array(from, to) {
+        let a = [];
+        for (let i = from; i <= to; i++) {
+          a.push(i);
+        }
+        return a;
+      }
+  
+      // Create an array of numbers from 'from' to 'to'
+      const myarray = array(from, to);
+      console.log(myarray); // Log the created array
+  
+      // Find users with 'points' in the 'myarray' array
+      const users = await User.find({ points: { $in: myarray } });
+  
+      // Respond with the found users
       res.status(200).json(users);
-  } catch (error) {
+    } catch (error) {
+      // If there is an error, respond with a 500 status code and the error message
       res.status(500).json({ message: error.message });
-  }
-});
+    }
+  });
+  
 
 exports.getsortedfiltredusers = asyncCatcher(async (req, res, next) => {
   try {
