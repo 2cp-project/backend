@@ -42,12 +42,124 @@ exports.getsortedusers = asyncCatcher(async (req, res, next) => {
       res.status(500).json({ message: error.message });
     }
   });
+
+
+  
+  exports.getsearchedsortedfiltredusers = asyncCatcher(async (req, res, next) => {
+    try {
+      const filter = req.query.filtre ? req.query.filtre.split(',') : [];
+      const searchRegex = new RegExp(req.query.search, 'i');
+        const from = req.params.from;
+        const to = req.params.to;
+    
+        // Function to create an array of numbers from 'from' to 'to'
+        function array(from, to) {
+          let a = [];
+          for (let i = from; i <= to; i++) {
+            a.push(i);
+          }
+          return a;
+        }
+    
+        // Create an array of numbers from 'from' to 'to'
+        const myarray = array(from, to);
+        console.log(myarray); // Log the created array
+    
+        // Find users with 'points' in the 'myarray' array
+        const users = await User.find({$or: [
+            { name: { $regex: searchRegex } },
+            { skills: { $regex: searchRegex } }
+        ]},{ skills: { $in: filter} },{ points: { $in: myarray } });
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+  });
+  
+
+  
+  
+  exports.getsearchedsortedusers = asyncCatcher(async (req, res, next) => {
+    try {
+      const filtre = req.query.filtre ? req.query.filtre.split(',') : [];
+        console.log(req.query.search);
+        const searchRegex = new RegExp(req.query.search, 'i');
+        const from = req.params.from;
+      const to = req.params.to;
+  
+      // Function to create an array of numbers from 'from' to 'to'
+      function array(from, to) {
+        let a = [];
+        for (let i = from; i <= to; i++) {
+          a.push(i);
+        }
+        return a;
+      }
+  
+      // Create an array of numbers from 'from' to 'to'
+      const myarray = array(from, to);
+      console.log(myarray); // Log the created array
+      const users = await User.find(
+        {$or: [
+            { name: { $regex: searchRegex } },
+            { skills: { $regex: searchRegex } },
+            {skills:{$in:filtre}}
+        ]},{ points: { $in: myarray } }
+    );
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+  }); 
+
+
+
+  exports.getsearchedfiltredusers = asyncCatcher(async (req, res, next) => {
+    try {
+      const filtre = req.query.filtre ? req.query.filtre.split(',') : [];
+        console.log(req.query.search);
+        const searchRegex = new RegExp(req.query.search, 'i');
+        const users = await User.find({
+            $or: [
+                { name: { $regex: searchRegex } },
+                { skills: { $regex: searchRegex } },
+                
+            ]
+        },{skills:{$in:filtre}});
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+  });
+
+
+
+
+
   
 
 exports.getsortedfiltredusers = asyncCatcher(async (req, res, next) => {
   try {
     const filter = req.query.filtre ? req.query.filtre.split(',') : [];
-      const users = await User.find({ skills: { $in: filter} }).sort({ points: req.query.sort });
+      
+      const from = req.params.from;
+      const to = req.params.to;
+  
+      // Function to create an array of numbers from 'from' to 'to'
+      function array(from, to) {
+        let a = [];
+        for (let i = from; i <= to; i++) {
+          a.push(i);
+        }
+        return a;
+      }
+  
+      // Create an array of numbers from 'from' to 'to'
+      const myarray = array(from, to);
+      console.log(myarray); // Log the created array
+  
+      // Find users with 'points' in the 'myarray' array
+      const users = await User.find({ skills: { $in: filter} },{ points: { $in: myarray } });
       res.status(200).json(users);
   } catch (error) {
       res.status(500).json({ message: error.message });
@@ -171,6 +283,7 @@ exports.getsearchedfiltredblogs = asyncCatcher(async (req, res, next) => {
           $or: [
               { title: { $regex: searchRegex } },
               { categories: { $regex: searchRegex } },
+              { text: { $regex: searchRegex } },
               {categories:{$in:filtre}}
           ]
       });
