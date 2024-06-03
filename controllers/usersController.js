@@ -228,7 +228,7 @@ activities.sort((a, b) => b.datePublished - a.datePublished);
 
 // Output the sorted merged array
 console.log(activities);
-      res.activities({data:activities})
+      res.activities({data:activities,blogs:blogs,courses:courses,res:resourses})
       next()
     }
     
