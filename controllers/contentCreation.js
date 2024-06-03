@@ -570,7 +570,7 @@ res.json({
 
 exports.savecourse=asyncCatcher(async (req, res, next) => {
   try{
-const course=await Course.findOneAndUpdate(req.params.courseID)
+const course=await Course.findById(req.params.courseID)
 course.saves+=1;
 await course.save()
 
