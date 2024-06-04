@@ -6,13 +6,8 @@ const { Course } = require("../../userAuth/models/contentModule");
 const { Resource } = require("../../userAuth/models/contentModule");
 
 exports.getAllUsers = asyncCatcher(async (req, res, next) => {
+  try{
   const users = await User.find({});
-  
-  const  populatedusers = await Promise.all(users.map(async(user) => {
-   
-  await  user.populate('Experiences');
-   return user;
-  }));
   res.status(200).json({
     status: "success",
     dataLength: users.length,
@@ -20,8 +15,31 @@ exports.getAllUsers = asyncCatcher(async (req, res, next) => {
       populatedusers,
     },
   });
+}catch(error){
+  console.error("Error fetching users:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to get users ",
+    }); 
+}
 });
-exports.getUser = asyncCatcher(async (req, res, next) => {
+exports.getprofile=asyncCatcher(async(req,res,next)=>{
+  try{
+  const user=await User.findById(req.params.userID).populate('Experiences')
+  res.status(200).json(user,res.activities);
+  console.log("this is the username",user.name);
+  }catch(error){
+    console.error("Error fetching profile:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to get profile ",
+    });
+  }
+});
+
+
+exports.getmyUser = asyncCatcher(async (req, res, next) => {
+  try{
   const user= res.user
   await user.populate('Experiences');
   console.log(user)
@@ -29,12 +47,27 @@ exports.getUser = asyncCatcher(async (req, res, next) => {
   // Send the user's name and photo as a response
   res.status(200).json(user,res.activities);
   console.log("this is the username",user.name);
+  }catch(error){
+    console.error("Error fetching myuser:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to get myuser ",
+    });
+  }
 });
 exports.updateuser=asyncCatcher(async (req, res, next) => {
+  try{
   await User.findOneAndUpdate({_id:req.user._id},req.body)
   res.json({
     seccess:true,
-  }) 
+  }) }
+  catch(error){
+    console.error("Error updating user:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Failed to update user ",
+    });
+  }
 })
 // exports.deletuser=asyncCatcher(async (req, res, next) => {
 //   await User.findOneAndDelete(req.user._id)
@@ -221,11 +254,11 @@ exports.getUsersaves = asyncCatcher(async (req, res, next) => {
 
 
 
-exports.getuseractivities=asyncCatcher(async (req, res, next) => {
+exports.getmyactivities=asyncCatcher(async (req, res, next) => {
   try {
-      const blogs=await Blog.find({user_id:req.body.user_id}).sort({datePublished:-1});
-      const courses=await Course.find({user_id:req.user_id}).sort({datePublished:-1});
-      const resourses=await Resource.find({user_id:req.user_id}).sort({datePublished:-1});
+      const blogs=await Blog.find({user_id:req.user._id}).sort({datePublished:-1});
+      const courses=await Course.find({user_id:req.user._id}).sort({datePublished:-1});
+      const resourses=await Resource.find({user_id:req.user._id}).sort({datePublished:-1});
       const activities = blogs.concat(courses, resourses);
 
 // Sort the merged array by datePublished (from newest to oldest)
@@ -238,14 +271,40 @@ console.log(activities);
     }
     
   catch(error){
-          console.error("Error getting statistics:", error);
+          console.error("Error getting myactivities:", error);
           res.status(500).json({
             status: "error",
-            message: "Failed to get statistics ",
+            message: "Failed to get myactivities ",
   
       })
 
       }});
+
+      exports.getuseractivities=asyncCatcher(async (req, res, next) => {
+        try {
+            const blogs=await Blog.find({user_id:req.params.userID}).sort({datePublished:-1});
+            const courses=await Course.find({user_id:req.params.userID}).sort({datePublished:-1});
+            const resourses=await Resource.find({user_id:req.params.userID}).sort({datePublished:-1});
+            const activities = blogs.concat(courses, resourses);
+      
+      // Sort the merged array by datePublished (from newest to oldest)
+      activities.sort((a, b) => b.datePublished - a.datePublished);
+      
+      // Output the sorted merged array
+      console.log(activities);
+            res.activities({data:activities,blogs:blogs,courses:courses,res:resourses})
+            next()
+          }
+          
+        catch(error){
+                console.error("Error getting activities:", error);
+                res.status(500).json({
+                  status: "error",
+                  message: "Failed to get activities ",
+        
+            })
+      
+            }});
 // exports.getAllUsers=handleFactory.getAll(User)
 
 exports.getUserCv = handleFactory.getOne(User);
