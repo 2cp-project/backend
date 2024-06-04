@@ -7,18 +7,23 @@ const { Resource } = require("../../userAuth/models/contentModule");
 
 exports.getAllUsers = asyncCatcher(async (req, res, next) => {
   const users = await User.find({});
-  // Send the users data as a response
+  
+  const  populatedusers = await Promise.all(users.map(async(user) => {
+   
+  await  user.populate('Experiences');
+   return user;
+  }));
   res.status(200).json({
     status: "success",
     dataLength: users.length,
     data: {
-      users,
+      populatedusers,
     },
   });
 });
 exports.getUser = asyncCatcher(async (req, res, next) => {
-  // const user = req.user;
-  const user= await User.find({_id:req.params.userID}).populate('Experiences')
+  const user= res.user
+  await user.populate('Experiences');
   console.log(user)
   
   // Send the user's name and photo as a response
